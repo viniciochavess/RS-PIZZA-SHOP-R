@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { promise, z } from "zod";
 
 const signInSchemaForm = z.object({
@@ -26,6 +27,7 @@ export function SignIn() {
       setTimeout(() => {
         console.log("Dados do formulário:", data);
         resolve(data);
+        toast.success("Login realizado com sucesso!");
       }, 2000); 
     })
   
