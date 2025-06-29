@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { promise, z } from "zod";
 
@@ -21,16 +22,14 @@ export function SignIn() {
   } = useForm<SignInFormData>();
 
   function handleSignIn(data: SignInFormData) {
-    
     // crie uma promise para simular uma requisição
     return new Promise((resolve) => {
       setTimeout(() => {
         console.log("Dados do formulário:", data);
         resolve(data);
         toast.success("Login realizado com sucesso!");
-      }, 2000); 
-    })
-  
+      }, 2000);
+    });
   }
 
   return (
@@ -38,6 +37,13 @@ export function SignIn() {
       <Helmet title="Login" />
 
       <div className="p-8">
+        <Button asChild
+          className="absolute top-8 right-8"
+        >
+          <Link to="/sign-up" className="text-sm text-muted-foreground">
+            Novo estabelecimento
+          </Link>
+        </Button>
         <div className="flex w-[350px] flex-col justify-center gap-6">
           <div className="flex flex-col gap-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight">
