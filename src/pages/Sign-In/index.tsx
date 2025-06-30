@@ -5,7 +5,7 @@ import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { promise, z } from "zod";
+import { z } from "zod";
 
 const signInSchemaForm = z.object({
   email: z.string().email("E-mail inválido"),

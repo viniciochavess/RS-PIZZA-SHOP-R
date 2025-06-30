@@ -3,6 +3,8 @@ import { AuthLayout } from "../pages/_layouts/auth";
 import { SignIn } from "../pages/Sign-In";
 import { AppLayout } from "../pages/_layouts/app";
 import { SignUp } from "@/pages/Sign-up";
+import { Orders } from "@/pages/orders/orders";
+import { Dashboard } from "@/pages/dashboard/dashbord";
 
 export const Routes = createBrowserRouter([
   {
@@ -10,10 +12,16 @@ export const Routes = createBrowserRouter([
     element: <AppLayout />,
     children: [
       {
-        element: <h1>Home</h1>,
+        path: "/",
+        element: <Dashboard/>,
       },
+      {
+        path: "/orders",
+        element: <Orders />,
+      }
     ],
   },
+  
   {
     path: "/",
     element: <AuthLayout />,
