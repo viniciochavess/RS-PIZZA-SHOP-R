@@ -5,11 +5,13 @@ import { AppLayout } from "../pages/_layouts/app";
 import { SignUp } from "@/pages/Sign-up";
 import { Orders } from "@/pages/orders/orders";
 import { Dashboard } from "@/pages/dashboard/dashbord";
+import { NotFound } from "@/pages/not-found/Not-found";
 
 export const Routes = createBrowserRouter([
   {
     path: "/",
     element: <AppLayout />,
+    errorElement: <NotFound/>, // You can replace this with a NotFound component
     children: [
       {
         path: "/",
