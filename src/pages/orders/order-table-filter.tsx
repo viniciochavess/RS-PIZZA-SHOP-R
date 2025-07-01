@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 
 export function OrderTableFilter() {
   return (
@@ -28,8 +28,12 @@ export function OrderTableFilter() {
           <SelectItem value="delivered">Entregue</SelectItem>
         </SelectContent>
       </Select>
-      <Button size={"sm"} variant="secondary" className="h-8">
-        <Search className="w-4 h-4" />
+
+      <Button type="submit" size={"sm"} variant="secondary" className="h-8">
+        <Search className="w-4 h-4" /> Filtrar resultados
+      </Button>
+      <Button type="button" size={"sm"} variant="outline" className="h-8">
+        <X className="w-4 h-4" /> Remover filtros
       </Button>
     </form>
   );
