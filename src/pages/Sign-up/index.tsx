@@ -1,12 +1,14 @@
+import { registerRestaurant } from "@/api/register-restaurant";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { error } from "console";
+import { useMutation } from "@tanstack/react-query";
+
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { promise, z } from "zod";
+import { z } from "zod";
 
 const signInSchemaForm = z.object({
   email: z.string().email("E-mail inválido"),
@@ -30,24 +32,26 @@ export function SignUp() {
     formState: { isSubmitting },
   } = useForm<SignInFormData>();
 
+  const { mutateAsync: registerRestaurantFn } = useMutation({
+    mutationFn: registerRestaurant,
+  });
+
   function handleSignIn(data: SignInFormData) {
     try {
-  
-       new Promise((resolve) => {
-        setTimeout(() => {
-          console.log("Dados do formulário:", data);
-          resolve(data);
-          toast.success("Login realizado com sucesso!");
-        }, 2000);
+      registerRestaurantFn({
+        restaurantName: data.restaurantName,
+        managerName: data.managerName,
+        email: data.email,
+        phone: data.phone,
       });
-      toast.success("Cadastro realizado com sucesso!",{
-        action:{
+      toast.success("Cadastro realizado com sucesso!", {
+        action: {
           label: "Acessar painel",
           onClick: () => {
-            navigate("/sign-in");
+            navigate(`/sign-in?email=${data.email}`);
           },
-        }
-      }); 
+        },
+      });
     } catch (error) {
       toast.error("Erro ao realizar o cadastro. Tente novamente.");
       console.error("Erro ao cadastrar:", error);
