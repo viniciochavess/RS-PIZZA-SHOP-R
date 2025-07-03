@@ -1,6 +1,8 @@
+import { signIn as signin } from "@/api/sign-in";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useMutation } from "@tanstack/react-query";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
@@ -21,15 +23,18 @@ export function SignIn() {
     formState: { isSubmitting },
   } = useForm<SignInFormData>();
 
+  const {mutateAsync: authenticate} = useMutation({
+    mutationFn: signin,
+  });
+
+
+
   function handleSignIn(data: SignInFormData) {
-    // crie uma promise para simular uma requisição
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        console.log("Dados do formulário:", data);
-        resolve(data);
-        toast.success("Login realizado com sucesso!");
-      }, 2000);
-    });
+    authenticate({
+      email:data.email
+    })
+      toast.success("Login realizado com sucesso!");
+
   }
 
   return (
@@ -37,9 +42,7 @@ export function SignIn() {
       <Helmet title="Login" />
 
       <div className="p-8">
-        <Button asChild
-          className="absolute top-8 right-8"
-        >
+        <Button asChild className="absolute top-8 right-8">
           <Link to="/sign-up" className="text-sm text-muted-foreground">
             Novo estabelecimento
           </Link>
