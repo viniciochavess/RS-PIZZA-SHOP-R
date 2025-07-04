@@ -12,6 +12,7 @@ import {
 import {useQuery } from "@tanstack/react-query";
 import { getProfile } from "@/api/get-profile";
 import { getManagedRestaurant } from "@/api/get-manager-restaurant";
+import { Skeleton } from "./ui/skeleton";
 
 
 export function AccountMenu() {
@@ -20,7 +21,7 @@ export function AccountMenu() {
     queryFn: getProfile,
   });
 
-   const { data: dataManagedRestaurant } = useQuery({
+   const { data: dataManagedRestaurant, isLoading: isLoadingManagedRestaurant } = useQuery({
     queryKey: ["profile"],
     queryFn: getManagedRestaurant,
   });
@@ -33,16 +34,16 @@ export function AccountMenu() {
           variant="outline"
           className="flex select-none items-center gap-2"
         >
-          Pizza Shop
+         {isLoadingManagedRestaurant ? <Skeleton className="w-40 h-4"/> : ( dataManagedRestaurant?.name || "Loja não disponível")}
           <ChevronDown className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="flex flex-col">
-          <span>{dataManagedRestaurant?.name}</span>
+          
           <span className="text-xs font-normal text-muted-foreground">
-            diego@rocketseat.com.br
+            {dataProfile?.email || "Email não disponível"}
           </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
