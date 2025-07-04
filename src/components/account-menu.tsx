@@ -1,6 +1,6 @@
-import { Building, ChevronDown, LogOut } from 'lucide-react'
+import { Building, ChevronDown, LogOut } from "lucide-react";
 
-import { Button } from './ui/button'
+import { Button } from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,9 +8,24 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu'
+} from "./ui/dropdown-menu";
+import {useQuery } from "@tanstack/react-query";
+import { getProfile } from "@/api/get-profile";
+import { getManagedRestaurant } from "@/api/get-manager-restaurant";
+
 
 export function AccountMenu() {
+  const { data: dataProfile } = useQuery({
+    queryKey: ["profile"],
+    queryFn: getProfile,
+  });
+
+   const { data: dataManagedRestaurant } = useQuery({
+    queryKey: ["profile"],
+    queryFn: getManagedRestaurant,
+  });
+  console.log("AccountMenu data:", dataManagedRestaurant);
+ 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -25,7 +40,7 @@ export function AccountMenu() {
 
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="flex flex-col">
-          <span>Diego Fernandes</span>
+          <span>{dataManagedRestaurant?.name}</span>
           <span className="text-xs font-normal text-muted-foreground">
             diego@rocketseat.com.br
           </span>
@@ -41,5 +56,5 @@ export function AccountMenu() {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
