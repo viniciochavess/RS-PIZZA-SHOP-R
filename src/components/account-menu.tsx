@@ -25,8 +25,9 @@ export function AccountMenu() {
 
   const { data: dataManagedRestaurant, isLoading: isLoadingManagedRestaurant } =
     useQuery({
-      queryKey: ["managed-restaurant"], // ✅ Corrigido: chave única
+      queryKey: ["managed-restaurant"],
       queryFn: getManagedRestaurant,
+      staleTime: Infinity,
     });
 
   return (
