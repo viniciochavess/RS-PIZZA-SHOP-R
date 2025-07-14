@@ -1,3 +1,4 @@
+import { getOrderDetails } from '@/api/get-order-details'
 import {
   DialogContent,
   DialogDescription,
@@ -13,12 +14,33 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useQueries, useQuery } from '@tanstack/react-query'
+import { OrderStatus } from './order-status'
+import { format } from 'path'
+import { formatDistanceToNow } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 
-export function OrderDetails() {
+interface OrderDetailsProps {
+  orderId: string,
+  open: boolean,
+}
+
+export function OrderDetails({ orderId , open}: OrderDetailsProps) {
+  
+  const {data: order} = useQuery({
+    queryKey: ['orderDetails', orderId],
+    queryFn: () => getOrderDetails(orderId),
+    enabled: open, // Only fetch when the dialog is open
+  })
+
+  if(!order) {
+    return <div>Carregando...</div>
+  }
+  
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Pedido: 1827fy2827d6h</DialogTitle>
+        <DialogTitle>Pedido: {order.id}</DialogTitle>
         <DialogDescription>Detalhes do pedido</DialogDescription>
       </DialogHeader>
 
@@ -28,43 +50,46 @@ export function OrderDetails() {
             <TableRow>
               <TableCell className="text-muted-foreground">Status</TableCell>
               <TableCell className="flex justify-end">
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-slate-400" />
-                  <span className="font-medium text-muted-foreground">
-                    Pendente
-                  </span>
-                </div>
+               <OrderStatus status={order.status} />
               </TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="text-muted-foreground">Cliente</TableCell>
               <TableCell className="flex justify-end">
-                Diego Schell Fernandes
+               {order.customer.name}
               </TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="text-muted-foreground">Telefone</TableCell>
               <TableCell className="flex justify-end">
-                (47) 99999-9999
+                {order.customer.phone}
               </TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="text-muted-foreground">E-mail</TableCell>
               <TableCell className="flex justify-end">
-                diego@rocketseat.com.br
+                {order.customer.email}
               </TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="text-muted-foreground">
                 Realizado há
               </TableCell>
-              <TableCell className="flex justify-end">há 3 minutos</TableCell>
+              <TableCell className="flex justify-end">
+                {formatDistanceToNow(new Date(order.createdAt), {
+                  addSuffix: true,
+                  locale: ptBR,
+                })}
+                
+              </TableCell>
             </TableRow>
           </TableBody>
         </Table>
 
         <Table>
           <TableHeader>
+
+           
             <TableRow>
               <TableHead>Produto</TableHead>
               <TableHead className="text-right">Qtd.</TableHead>
