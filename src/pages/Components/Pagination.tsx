@@ -36,7 +36,7 @@ export function Pagination({
               }}
               className="h-8 w-8 p-0"
               variant={"outline"}
-              disabled={pageIndex === 0}
+              disabled={pageIndex <= 0}
             >
               <ChevronsLeft />
               <span className="sr-only">Primeira Página</span>
@@ -47,7 +47,7 @@ export function Pagination({
               }}
               className="h-8 w-8 p-0"
               variant={"outline"}
-              disabled={pageIndex === 0}
+              disabled={pageIndex <= 0}
             >
               <ChevronLeft />
               <span className="sr-only">Anterior Página</span>
