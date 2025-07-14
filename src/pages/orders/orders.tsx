@@ -12,12 +12,27 @@ import { OrderTableFilter } from "./order-table-filter";
 import { Pagination } from "../Components/Pagination";
 import { useQuery } from "@tanstack/react-query";
 import { getOrders } from "@/api/get-orders";
+import { useSearchParams } from "react-router-dom";
+import { z } from "zod";
+import { set } from "date-fns";
 
 export function Orders() {
-  const {data: results} = useQuery({
-    queryKey: ["orders"],
-    queryFn: getOrders,
-  })
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageIndex = z.coerce
+    .number()
+    .transform((page) => page - 1)
+    .parse(searchParams.get("page") ?? "1");
+  const { data: results } = useQuery({
+    queryKey: ["orders", pageIndex],
+    queryFn: () => getOrders({ pageIndex }),
+  });
+
+  function handleChangePage(page: number) {
+    setSearchParams((prev) => {
+      prev.set("page", String(page + 1));
+      return prev;
+    });
+  }
   return (
     <>
       <Helmet title="Pedidos" />
@@ -25,7 +40,7 @@ export function Orders() {
         <h1 className="text-3xl font-bold tracking-tighter ">Pedidos</h1>
       </div>
       <div className="space-y-4">
-        <OrderTableFilter/>
+        <OrderTableFilter />
         <div className="border-rounded-md">
           <Table>
             <TableHeader>
@@ -41,13 +56,19 @@ export function Orders() {
               </TableRow>
             </TableHeader>
             <TableBody>
-             {results && results.orders.map((order) => (
-                <OrderTableRow orders={order} key={order.orderId}/>))
-              }
+              {results &&
+                results.orders.map((order) => (
+                  <OrderTableRow orders={order} key={order.orderId} />
+                ))}
             </TableBody>
           </Table>
         </div>
-        <Pagination pageIndex={1} perPage={4} totalCount={9}/>
+        {results && (
+          <Pagination
+          onChangePage={handleChangePage}
+          pageIndex={pageIndex} perPage={results.meta.perPage} totalCount={results.meta.totalCount} />
+
+        )}
       </div>
     </>
   );
