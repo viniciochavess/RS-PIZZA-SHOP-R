@@ -5,8 +5,13 @@ import { ArrowRight, Search, X } from "lucide-react";
 import { OrderDetails } from "./order-details";
 import { OrderStatus } from "./order-status";
 import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { ca, ptBR } from "date-fns/locale";
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { cancelOrder } from "@/api/cancel.order";
+import { toast } from "sonner";
+import { queryClient } from "@/utils/react-query";
+import { GetOrdersResponse } from "@/api/get-orders";
 
 interface OrderTableRowProps {
   orders: {
@@ -20,6 +25,32 @@ interface OrderTableRowProps {
 
 export function OrderTableRow({ orders }: OrderTableRowProps) {
   const [isDetailsOpen, setDetailsOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const {mutateAsync: handleCancelOrderFn} = useMutation({
+    mutationFn: cancelOrder,
+    async onSuccess(_, orderId: string) {
+      const ordersListCache = queryClient.getQueriesData<GetOrdersResponse>({
+        queryKey:["orders"]
+      });
+      ordersListCache.forEach(([cacheKey, cacheData])=>{
+        if(!cacheData) return;
+        queryClient.setQueryData<GetOrdersResponse>(cacheKey,{
+          ...cacheData,
+          orders: cacheData.orders.map((order) => {
+            if (order.orderId === orderId) {
+              return {
+                ...order,
+                status: "canceled",
+              };
+            }
+            return order;
+          }
+        )
+        })
+      })
+      toast.success("Pedido cancelado com sucesso!");
+    }
+  })
   return (
     <TableRow>
       <TableCell>
@@ -48,18 +79,26 @@ export function OrderTableRow({ orders }: OrderTableRowProps) {
         <OrderStatus status={orders.status} key={orders.orderId} />
       </TableCell>
       <TableCell className="font-medium">{orders.customerName}</TableCell>
-      <TableCell className="font-medium">{orders.total.toLocaleString('pt-br',{
+      <TableCell className="font-medium">{(orders.total/100).toLocaleString('pt-br',{
         style: "currency",
         currency: "BRL",
       })}</TableCell>
       <TableCell>
-        <Button variant={"ghost"}>
+        <Button variant={"default"}>
           <ArrowRight className="size-1" />
-          Cancelar
+          Aprovar
         </Button>
       </TableCell>
       <TableCell>
-        <Button variant={"ghost"}>
+        <Button variant={"ghost"}
+        onClick={() => {
+          handleCancelOrderFn(orders.orderId);
+        
+        
+        }}
+          disabled={!["pending", "processing"].includes(orders.status)}
+        >
+          
           <X className="size-1" />
           Cancelar
         </Button>
