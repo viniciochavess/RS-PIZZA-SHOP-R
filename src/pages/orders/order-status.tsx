@@ -1,9 +1,10 @@
-type OrderStatus =
+export type OrderStatus =
   | "pending"
   | "canceled"
   | "processing"
   | "delivered"
-  | "delivering";
+  | "delivering"
+
 
 interface OrderStatusProps {
   status: OrderStatus;
@@ -14,6 +15,7 @@ const orderStatusLabels: Record<OrderStatus, string> = {
   processing: "Em preparo",
   delivering: "Em entrega",
   delivered: "Entregue",
+
 };
 
 export function OrderStatus({ status }: OrderStatusProps) {
